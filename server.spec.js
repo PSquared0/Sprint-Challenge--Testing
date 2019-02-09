@@ -22,9 +22,14 @@ describe("server.js", () => {
       expect(response.status).toEqual(expectedStatusCode);
     });
 
-    it("should always return an array", async () => {
+    it("realse year should always be an intger", async () => {
       const response = await request(server).get("/games");
-      expect(response.type).toBeInstanceOf(Array);
+      expect(response).toMatch(/^\d{4}$/);
+    });
+
+    it("should always return an array", async () => {
+      const response = await request(server).get("/games").send(goodData);
+      expect(response.type).toEqual('array');
     });
   });
 });
@@ -58,29 +63,23 @@ describe("post route", () => {
       .set("Accept", "application/json");
     expect(response.status)
       .toEqual(expectedStatusCode)
-      .send(data)
-      .end(err => {
-        if (err) return done(err);
-        done();
-      });
+    
+  
   });
 
   it("should return a 422 status code if required information is not complete", async () => {
     request(server)
       .post("/games")
-      .send(data2)
+      .send(badData)
       .set("Accept", "application/json")
       .expect("Content-Type", /json/)
       .expect(422)
       .expect('"games not created, incomplete info provided"')
-      .end(err => {
-        if (err) return done(err);
-        done();
-      });
+    });
 
     it("should return a JSON object fron the post route", async () => {
       const response = await request(server).post("/games");
       expect(response.type).toEqual("application/json");
     });
-  });
+ 
 });
