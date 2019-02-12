@@ -22,14 +22,14 @@ describe("server.js", () => {
       expect(response.status).toEqual(expectedStatusCode);
     });
 
-    it("realse year should always be an intger", async () => {
+    it("realse year should always be an integer", async () => {
       const response = await request(server).get("/games");
-      expect(response).toMatch(/^\d{4}$/);
+      expect(response.body[0].releaseYear).toBeGreaterThan(1970);
     });
 
     it("should always return an array", async () => {
       const response = await request(server).get("/games").send(goodData);
-      expect(response.type).toEqual('array');
+      expect(response.body).toBeInstanceOf(Array);
     });
   });
 });
